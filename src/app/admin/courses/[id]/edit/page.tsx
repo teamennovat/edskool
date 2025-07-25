@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 import CourseForm from "../../_components/course-form";
 
-type CourseEditParams = {
-  id: string;
+type Props = {
+  params: { id: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 export const metadata: Metadata = {
@@ -10,11 +11,7 @@ export const metadata: Metadata = {
   description: "Edit course details in the admin dashboard",
 };
 
-export default async function EditCoursePage({
-  params,
-}: {
-  params: CourseEditParams;
-}) {
+export default function EditCoursePage({ params }: Props) {
   return (
     <div className="container max-w-4xl py-6">
       <CourseForm courseId={params.id} />
