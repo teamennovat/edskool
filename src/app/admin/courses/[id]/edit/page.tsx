@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import CourseForm from "../../_components/course-form";
 
 export const metadata: Metadata = {
@@ -6,10 +7,16 @@ export const metadata: Metadata = {
   description: "Edit course details in the admin dashboard",
 };
 
-export default function EditCoursePage({ params }: { params: { id: string } }) {
+export default async function EditCoursePage({
+  params,
+}: {
+  params: { id: string };
+}) {
   return (
     <div className="container max-w-4xl py-6">
-      <CourseForm courseId={params.id} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <CourseForm courseId={params.id} />
+      </Suspense>
     </div>
   );
 }
