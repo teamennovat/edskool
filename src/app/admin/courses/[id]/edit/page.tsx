@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default function EditCoursePage({
-  // Remove async here
   params,
 }: {
   params: { id: string };
