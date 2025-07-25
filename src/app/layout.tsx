@@ -34,6 +34,8 @@ export const metadata: Metadata = {
 
 import { NavigationWrapper } from "@/components/layout/navigation-wrapper";
 import { Toaster } from "sonner";
+import { CookieBanner } from "@/components/shared/cookie-consent";
+import { GoogleAnalytics } from "@/components/shared/google-analytics";
 
 export default function RootLayout({
   children,
@@ -45,8 +47,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
+        <GoogleAnalytics />
         <NavigationWrapper>{children}</NavigationWrapper>
         <Toaster />
+        <CookieBanner />
       </body>
     </html>
   );
