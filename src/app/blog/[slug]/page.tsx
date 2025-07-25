@@ -7,12 +7,6 @@ import { cookies } from "next/headers";
 import { format } from "date-fns";
 import { RelatedPosts } from "../components/related-posts";
 
-interface BlogCategory {
-  id: string;
-  name: string;
-  slug: string;
-}
-
 interface Props {
   params: {
     slug: string;
