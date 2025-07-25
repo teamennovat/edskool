@@ -7,7 +7,8 @@ export const metadata: Metadata = {
   description: "Edit course details in the admin dashboard",
 };
 
-export default async function EditCoursePage({
+export default function EditCoursePage({
+  // Remove async here
   params,
 }: {
   params: { id: string };
