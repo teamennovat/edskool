@@ -1,19 +1,14 @@
-import { Metadata } from "next";
-import CourseFormWrapper from "../../_components/course-form-wrapper";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Edit Course - Admin Dashboard",
-  description: "Edit course details in the admin dashboard",
-};
+import { Suspense } from "react";
+import CourseForm from "../../_components/course-form";
 
-interface PageProps {
-  params: { id: string };
-}
-
-export default function EditCoursePage({ params }: PageProps) {
+export default function EditCoursePage({ params }: { params: { id: string } }) {
   return (
     <div className="container max-w-4xl py-6">
-      <CourseFormWrapper courseId={params.id} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <CourseForm courseId={params.id} />
+      </Suspense>
     </div>
   );
 }
