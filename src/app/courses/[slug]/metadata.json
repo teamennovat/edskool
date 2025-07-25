@@ -1,0 +1,8 @@
+{
+  "title": "Generate static metadata",
+  "description": "Add SEO metadata to the course page",
+  "openGraph": {
+    "title": "Learn more about this course",
+    "description": "Explore this course and see if it's right for you"
+  }
+}
