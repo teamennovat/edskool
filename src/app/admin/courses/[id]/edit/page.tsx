@@ -1,28 +1,19 @@
 import { Metadata } from "next";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
-
-// Dynamically import the CourseForm component with no SSR
-const CourseForm = dynamic(() => import("../../_components/course-form"), {
-  ssr: false,
-});
+import CourseFormWrapper from "../../_components/course-form-wrapper";
 
 export const metadata: Metadata = {
   title: "Edit Course - Admin Dashboard",
   description: "Edit course details in the admin dashboard",
 };
 
-type Props = {
+interface PageProps {
   params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+}
 
-export default async function EditCoursePage({ params }: Props) {
+export default function EditCoursePage({ params }: PageProps) {
   return (
     <div className="container max-w-4xl py-6">
-      <Suspense fallback={<div>Loading...</div>}>
-        <CourseForm courseId={params.id} />
-      </Suspense>
+      <CourseFormWrapper courseId={params.id} />
     </div>
   );
 }
