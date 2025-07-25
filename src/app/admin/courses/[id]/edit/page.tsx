@@ -1,19 +1,18 @@
-"use client";
-
 import { Suspense } from "react";
-import CourseForm from "../../_components/course-form";
+import ClientPage from "./client-page";
+
+type SearchParams = { [key: string]: string | string[] | undefined };
 
 interface Props {
-  params: {
-    id: string;
-  };
+  params: { id: string };
+  searchParams: SearchParams;
 }
 
-export default function EditCoursePage({ params }: Props) {
+export default async function EditCoursePage(props: Props) {
   return (
     <div className="container max-w-4xl py-6">
       <Suspense fallback={<div>Loading...</div>}>
-        <CourseForm courseId={params.id} />
+        <ClientPage id={props.params.id} />
       </Suspense>
     </div>
   );
