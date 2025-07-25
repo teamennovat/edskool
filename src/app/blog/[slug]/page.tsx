@@ -7,36 +7,6 @@ import { cookies } from "next/headers";
 import { format } from "date-fns";
 import { RelatedPosts } from "../components/related-posts";
 
-interface BlogCategory {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface BlogTag {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  content: string;
-  featured_image: string | null;
-  published_at: string;
-  meta_title: string | null;
-  meta_description: string | null;
-  author: {
-    id: string;
-    email: string;
-    name: string | null;
-  };
-  category: BlogCategory;
-}
-
 interface Props {
   params: {
     slug: string;
