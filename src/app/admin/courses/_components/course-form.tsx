@@ -28,7 +28,7 @@ interface Subcategory {
   category_id: string;
 }
 
-export default function CourseForm({ courseId }: { courseId?: string }) {
+export default async function CourseForm({ courseId }: { courseId: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);

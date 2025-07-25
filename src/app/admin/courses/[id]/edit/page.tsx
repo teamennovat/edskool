@@ -1,13 +1,18 @@
 import CourseForm from "../../_components/course-form";
+import { Suspense } from "react";
 
-export default function EditCoursePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+export default function EditCoursePage({ params }: Props) {
   return (
-    <div className="container max-w-4xl py-6">
-      <CourseForm courseId={params.id} />
-    </div>
+    <Suspense fallback="Loading...">
+      <div className="container max-w-4xl py-6">
+        <CourseForm courseId={params.id} />
+      </div>
+    </Suspense>
   );
 }
