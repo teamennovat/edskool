@@ -1,8 +1,6 @@
 import React from "react";
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { CourseIcon } from "./course-icon";
 
 // Initialize Supabase client

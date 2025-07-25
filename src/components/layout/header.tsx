@@ -53,7 +53,7 @@ export function Header() {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [supabase.auth]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
