@@ -1,20 +1,24 @@
 import CourseForm from "../../_components/course-form";
 
-// This is a workaround to make the page async and satisfy Next.js types
-async function getPageProps(id: string) {
-  return { id: await Promise.resolve(id) };
-}
+// Define the page parameters type
+type PageParams = {
+  id: string;
+};
 
+// This is a Next.js App Router page component
 export default async function Page({
   params,
+  searchParams,
 }: {
-  params: { id: string };
+  params: PageParams;
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { id } = await getPageProps(params.id);
-  
+  // Ensure we have an async operation to match Next.js expectations
+  await Promise.resolve();
+
   return (
     <div className="container max-w-4xl py-6">
-      <CourseForm courseId={id} />
+      <CourseForm courseId={params.id} />
     </div>
   );
 }
