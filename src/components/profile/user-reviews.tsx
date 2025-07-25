@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { format } from "date-fns";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { toast } from "sonner";
@@ -137,14 +136,14 @@ export function UserReviews({ userId }: UserReviewsProps) {
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <Link
+                        <a
                           href={review.course.link}
                           className="text-lg font-semibold hover:text-primary transition-colors line-clamp-2 mb-1"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
                           {review.course.name}
-                        </Link>
+                        </a>
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {review.course.description}
                         </p>

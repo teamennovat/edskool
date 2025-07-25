@@ -1,4 +1,4 @@
-/// <reference types="next" />
+import type {} from 'next';
 /// <reference types="next/image-types/global" />
 
 import type { Metadata, ResolvingMetadata } from 'next';
