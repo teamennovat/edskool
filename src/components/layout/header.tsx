@@ -36,6 +36,7 @@ export function Header() {
   const supabase = createClientComponentClient();
   const [user, setUser] = useState<User | null>(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const getUser = async () => {
       const {
@@ -54,6 +55,7 @@ export function Header() {
 
     return () => subscription.unsubscribe();
   }, []);
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
