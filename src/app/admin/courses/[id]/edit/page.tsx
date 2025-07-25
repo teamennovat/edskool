@@ -1,17 +1,13 @@
 import CourseForm from "../../_components/course-form";
 
-// Define the page parameters type
-type PageParams = {
+interface EditPageParams {
   id: string;
-};
+}
 
-// This is a Next.js App Router page component
-export default async function Page({
+export default async function EditCoursePage({
   params,
-  searchParams,
 }: {
-  params: PageParams;
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: EditPageParams;
 }) {
   // Ensure we have an async operation to match Next.js expectations
   await Promise.resolve();

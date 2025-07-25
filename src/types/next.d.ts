@@ -1,10 +1,10 @@
-import type { NextPage } from 'next'
+/// <reference types="next" />
 
-declare module 'next' {
-  export type PageProps = {
-    params: { [key: string]: string }
-    searchParams?: { [key: string]: string | string[] | undefined }
+declare module "next" {
+  interface PageProps {
+    params: Record<string, string>;
+    searchParams?: Record<string, string | string[] | undefined>;
   }
-
-  export type Page<P = {}, IP = P> = NextPage<P, IP>
 }
+
+export {};
