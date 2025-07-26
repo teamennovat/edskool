@@ -1,8 +1,9 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 
-export default function NotFoundClient() {
+function NotFoundContent() {
   const searchParams = useSearchParams()
   const code = searchParams.get('code')
 
@@ -17,4 +18,13 @@ export default function NotFoundClient() {
       )}
     </div>
   )
+}
+
+export default function NotFoundClient() {
+  return (
+    <Suspense>
+      <NotFoundContent />
+    </Suspense>
+  )
+}
 }
