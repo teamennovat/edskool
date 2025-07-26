@@ -13,18 +13,15 @@ interface Props {
   };
 }
 
-// Generate metadata for SEO
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const supabase = createServerComponentClient({ cookies });
 
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const supabase = createServerComponentClient({ cookies });
   const { data: post } = await supabase.rpc("get_blog_post_with_details", {
     post_slug: params.slug,
   });
 
   if (!post) {
-    return {
-      title: "Post Not Found - edskool Blog",
-    };
+    return { title: "Post Not Found - edskool Blog" };
   }
 
   return {
@@ -35,17 +32,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.post.meta_description || post.post.excerpt,
       type: "article",
       url: `/blog/${post.post.slug}`,
-      images: post.post.featured_image
-        ? [{ url: post.post.featured_image }]
-        : [],
+      images: post.post.featured_image ? [{ url: post.post.featured_image }] : [],
     },
   };
 }
 
-export default async function BlogPostPage({ params }: Props) {
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const supabase = createServerComponentClient({ cookies });
 
-  // Fetch both post details and categories in parallel
   const [postResult, categoriesResult] = await Promise.all([
     supabase.rpc("get_blog_post_with_details", {
       post_slug: params.slug,
