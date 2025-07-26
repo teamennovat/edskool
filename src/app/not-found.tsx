@@ -1,5 +1,10 @@
+import { Suspense } from 'react'
 import NotFoundClient from '@/components/NotFoundClient'
 
 export default function NotFound() {
-  return <NotFoundClient />
+  return (
+    <Suspense>
+      <NotFoundClient />
+    </Suspense>
+  )
 }
