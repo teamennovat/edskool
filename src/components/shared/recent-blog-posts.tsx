@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
@@ -27,7 +27,7 @@ export function RecentBlogPosts() {
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    async function fetchPosts() {
+    const fetchPosts = async () => {
       try {
         const { data, error } = await supabase
           .from("blog_posts")
@@ -45,19 +45,29 @@ export function RecentBlogPosts() {
           `)
           .order('published_at', { ascending: false })
           .limit(3);
-          
-        if (error) {
-          setError(error.message);
-          return;
-        }
 
-        setPosts(data || []);
+        if (error) throw error;
+
+        const formattedPosts = (data || []).map((post: any) => ({
+          id: post.id,
+          title: post.title,
+          slug: post.slug,
+          excerpt: post.excerpt,
+          featured_image: post.featured_image,
+          published_at: post.published_at,
+          category: Array.isArray(post.category) 
+            ? post.category[0] 
+            : post.category,
+        }));
+        
+        setPosts(formattedPosts);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching posts:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch posts');
       } finally {
         setIsLoading(false);
       }
-    }
+    };
 
     fetchPosts();
   }, [supabase]);
@@ -80,14 +90,14 @@ export function RecentBlogPosts() {
         <div className="flex items-end justify-between mb-12">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">
-              From Our Blog
+              Latest Articles 
             </h2>
             <p className="text-muted-foreground mt-1">
-              The latest news, updates, and insights
+              Stay updated with our latest insights
             </p>
           </div>
-          <Button variant="link" asChild>
-            <Link href="/blog">View all posts →</Link>
+          <Button variant="outline" asChild>
+            <Link href="/blog">View All Posts</Link>
           </Button>
         </div>
 
@@ -112,7 +122,7 @@ export function RecentBlogPosts() {
               )}
               <div className="flex flex-col space-y-2">
                 <Link href={`/blog/${post.slug}`}>
-                  <h3 className="text-xl font-semibold tracking-tight hover:text-primary transition-colors">
+                  <h3 className="text-2xl font-bold tracking-tight hover:text-primary transition-colors">
                     {post.title}
                   </h3>
                 </Link>
@@ -146,47 +156,7 @@ export function RecentBlogPosts() {
       </div>
     </section>
   );
-
-        if (error) {
-          console.error("Error fetching blog posts:", error);
-          return;
-        }
-
-        if (data) {
-          setPosts(data);
-        }
-      } catch (error) {
-        console.error("Error fetching blog posts:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchPosts();
-  }, [supabase]);
-
-  if (isLoading) {
-    return <div className="py-16">Loading recent blog posts...</div>;
-  }
-
-  return (
-    <section className="py-16 bg-background">
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">
-              From Our Blog
-            </h2>
-            <p className="text-muted-foreground mt-1">
-              The latest news, updates, and insights
-            </p>
-          </div>
-          <Button variant="link" asChild>
-            <Link href="/blog">View all posts →</Link>
-          </Button>
-        </div>
-
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+}
           {posts.map((post) => (
             <article
               key={post.id}
@@ -228,192 +198,6 @@ export function RecentBlogPosts() {
                     addSuffix: true,
                   })}
                 </time>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-    if (error) {
-      console.error("Error fetching blog posts:", error);
-      return null;
-    }
-
-    if (!data?.length) {
-      console.log("No blog posts returned from query");
-      return null;
-    }
-
-    // Transform the data to match our BlogPost type
-    posts = data.map((post) => {
-      const categoryData = Array.isArray(post.category)
-        ? post.category[0]
-        : post.category;
-      return {
-        id: post.id,
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        featured_image: post.featured_image,
-        published_at: post.published_at,
-        category: categoryData
-          ? {
-              name: categoryData.name,
-              slug: categoryData.slug,
-            }
-          : null,
-      };
-    });
-
-    if (posts.length === 0) {
-      return null;
-    }
-
-    return (
-      <section className="py-16 bg-background">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight">
-                Latest Articles
-              </h2>
-              <p className="text-muted-foreground mt-1">
-                Stay updated with our latest articles and insights
-              </p>
-            </div>
-            <Button variant="secondary" asChild>
-              <Link href="/blog">View All Posts</Link>
-            </Button>
-          </div>
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post: BlogPost) => (
-              <article
-                key={post.id}
-                className="group relative flex flex-col space-y-4"
-              >
-                {post.featured_image && (
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="relative block aspect-video overflow-hidden rounded-lg"
-                  >
-                    <Image
-                      src={post.featured_image}
-                      alt={post.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </Link>
-                )}
-                <div className="flex flex-col space-y-2">
-                  <Link href={`/blog/${post.slug}`}>
-                    <h2 className="text-2xl font-bold tracking-tight transition-colors group-hover:text-primary">
-                      {post.title}
-                    </h2>
-                  </Link>
-                  {post.excerpt && (
-                    <p className="text-muted-foreground line-clamp-2">
-                      {post.excerpt}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    {post.category && (
-                      <>
-                        <Link
-                          href={`/blog?category=${post.category.slug}`}
-                          className="hover:text-primary transition-colors"
-                        >
-                          {post.category.name}
-                        </Link>
-                        <span>•</span>
-                      </>
-                    )}
-                    <time dateTime={post.published_at}>
-                      {formatDistance(new Date(post.published_at), new Date(), {
-                        addSuffix: true,
-                      })}
-                    </time>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  } catch (e) {
-    console.error("Error in RecentBlogPosts:", e);
-    return null;
-  }
-
-  return (
-    <section className="py-16 bg-background">
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">
-              Latest Articles
-            </h2>
-            <p className="text-muted-foreground mt-1">
-              Stay updated with our latest articles and insights
-            </p>
-          </div>
-          <Button variant="outline" asChild>
-            <Link href="/blog">View All Posts</Link>
-          </Button>
-        </div>
-
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post: BlogPost) => (
-            <article
-              key={post.id}
-              className="group relative flex flex-col space-y-4"
-            >
-              {post.featured_image && (
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="relative block aspect-video overflow-hidden rounded-lg"
-                >
-                  <Image
-                    src={post.featured_image}
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </Link>
-              )}
-              <div className="flex flex-col space-y-2">
-                <Link href={`/blog/${post.slug}`}>
-                  <h2 className="text-2xl font-bold tracking-tight transition-colors group-hover:text-primary">
-                    {post.title}
-                  </h2>
-                </Link>
-                {post.excerpt && (
-                  <p className="text-muted-foreground line-clamp-2">
-                    {post.excerpt}
-                  </p>
-                )}
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  {post.category && (
-                    <>
-                      <Link
-                        href={`/blog?category=${post.category.slug}`}
-                        className="hover:text-primary transition-colors"
-                      >
-                        {post.category.name}
-                      </Link>
-                      <span>•</span>
-                    </>
-                  )}
-                  <time dateTime={post.published_at}>
-                    {formatDistance(new Date(post.published_at), new Date(), {
-                      addSuffix: true,
-                    })}
-                  </time>
-                </div>
               </div>
             </article>
           ))}
