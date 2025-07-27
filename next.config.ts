@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  webpack: (config) => {
+    config.ignoreWarnings = [
+      { module: /node_modules/ },
+      { file: /recent-blog-posts\.tsx/ }
+    ];
+    return config;
+  },
 
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
