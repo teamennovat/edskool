@@ -1,9 +1,11 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+'use client'
+
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { formatDistance } from "date-fns";
+import { useEffect, useState } from "react";
 
 type BlogPost = {
   id: string;
@@ -18,30 +20,122 @@ type BlogPost = {
   } | null;
 };
 
-export async function RecentBlogPosts() {
-  let posts: BlogPost[] = [];
-  const supabase = createServerComponentClient({ cookies });
+export function RecentBlogPosts() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const supabase = createClientComponentClient();
 
-  try {
-    // Fetch the posts with their categories
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .select(
-        `
-        id,
-        title,
-        slug,
-        excerpt,
-        featured_image,
-        published_at,
-        category:blog_categories!inner (
-          name,
-          slug
-        )
-      `
-      )
-      .order("published_at", { ascending: false })
-      .limit(3);
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const { data, error } = await supabase
+          .from("blog_posts")
+          .select(
+            `
+            id,
+            title,
+            slug,
+            excerpt,
+            featured_image,
+            published_at,
+            category:blog_categories!inner (
+              name,
+              slug
+            )
+          `
+          )
+          .order("published_at", { ascending: false })
+          .limit(3);
+
+        if (error) {
+          console.error("Error fetching blog posts:", error);
+          return;
+        }
+
+        if (data) {
+          setPosts(data);
+        }
+      } catch (error) {
+        console.error("Error fetching blog posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, [supabase]);
+
+  if (isLoading) {
+    return <div className="py-16">Loading recent blog posts...</div>;
+  }
+
+  return (
+    <section className="py-16 bg-background">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">
+              From Our Blog
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              The latest news, updates, and insights
+            </p>
+          </div>
+          <Button variant="link" asChild>
+            <Link href="/blog">View all posts →</Link>
+          </Button>
+        </div>
+
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <article
+              key={post.id}
+              className="group relative flex flex-col space-y-4"
+            >
+              {post.featured_image && (
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="relative block aspect-video overflow-hidden rounded-lg bg-muted"
+                >
+                  <Image
+                    src={post.featured_image}
+                    alt={post.title}
+                    className="object-cover transition-transform group-hover:scale-105"
+                    fill
+                  />
+                </Link>
+              )}
+              <div className="flex flex-col space-y-2">
+                {post.category && (
+                  <Link
+                    href={`/blog/category/${post.category.slug}`}
+                    className="text-sm font-medium text-primary hover:text-primary/90"
+                  >
+                    {post.category.name}
+                  </Link>
+                )}
+                <h3 className="text-xl font-semibold tracking-tight">
+                  <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                </h3>
+                <p className="text-muted-foreground line-clamp-3">
+                  {post.excerpt}
+                </p>
+                <time
+                  dateTime={post.published_at}
+                  className="text-sm text-muted-foreground"
+                >
+                  {formatDistance(new Date(post.published_at), new Date(), {
+                    addSuffix: true,
+                  })}
+                </time>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
     if (error) {
       console.error("Error fetching blog posts:", error);

@@ -1,11 +1,15 @@
 'use client'
 
-import { Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
-function NotFoundContent() {
-  const searchParams = useSearchParams()
-  const code = searchParams.get('code')
+export default function NotFoundClient() {
+  const [errorCode, setErrorCode] = useState<string | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    setErrorCode(code)
+  }, [])
 
   return (
     <div className="container mx-auto px-4 py-16 text-center">
@@ -13,17 +17,9 @@ function NotFoundContent() {
       <p className="text-muted-foreground mb-8">
         Sorry, we couldn't find the page you're looking for.
       </p>
-      {code && (
-        <p className="text-sm text-muted-foreground">Error code: {code}</p>
+      {errorCode && (
+        <p className="text-sm text-muted-foreground">Error code: {errorCode}</p>
       )}
     </div>
-  )
-}
-
-export default function NotFoundClient() {
-  return (
-    <Suspense>
-      <NotFoundContent />
-    </Suspense>
   )
 }
