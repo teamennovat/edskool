@@ -1,8 +1,11 @@
+import { Suspense } from "react";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ProfileHeader } from "@/components/profile/profile-header";
 import { UserReviews } from "@/components/profile/user-reviews";
+
+export const dynamic = 'force-dynamic';
 
 export default async function ProfilePage() {
   const supabase = createServerComponentClient({ cookies });
@@ -25,16 +28,20 @@ export default async function ProfilePage() {
   return (
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       <div className="space-y-8">
-        <ProfileHeader
-          user={session.user}
-          profile={profile || { id: session.user.id }}
-        />
+        <Suspense>
+          <ProfileHeader
+            user={session.user}
+            profile={profile || { id: session.user.id }}
+          />
+        </Suspense>
 
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold tracking-tight">
             Your Reviews
           </h2>
-          <UserReviews userId={session.user.id} />
+          <Suspense fallback={<div>Loading reviews...</div>}>
+            <UserReviews userId={session.user.id} />
+          </Suspense>
         </div>
       </div>
     </div>
