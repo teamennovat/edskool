@@ -23,6 +23,7 @@ type BlogPost = {
 export function RecentBlogPosts() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -30,22 +31,121 @@ export function RecentBlogPosts() {
       try {
         const { data, error } = await supabase
           .from("blog_posts")
-          .select(
-            `
+          .select(`
             id,
             title,
             slug,
             excerpt,
             featured_image,
             published_at,
-            category:blog_categories!inner (
+            category:blog_categories (
               name,
               slug
             )
-          `
-          )
-          .order("published_at", { ascending: false })
+          `)
+          .order('published_at', { ascending: false })
           .limit(3);
+          
+        if (error) {
+          setError(error.message);
+          return;
+        }
+
+        setPosts(data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, [supabase]);
+
+  if (isLoading) {
+    return <div className="py-16 text-center">Loading recent blog posts...</div>;
+  }
+
+  if (error) {
+    return <div className="py-16 text-center text-red-500">{error}</div>;
+  }
+
+  if (posts.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="py-16 bg-background">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">
+              From Our Blog
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              The latest news, updates, and insights
+            </p>
+          </div>
+          <Button variant="link" asChild>
+            <Link href="/blog">View all posts →</Link>
+          </Button>
+        </div>
+
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <article
+              key={post.id}
+              className="group relative flex flex-col space-y-4"
+            >
+              {post.featured_image && (
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="relative block aspect-video overflow-hidden rounded-lg"
+                >
+                  <Image
+                    src={post.featured_image}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </Link>
+              )}
+              <div className="flex flex-col space-y-2">
+                <Link href={`/blog/${post.slug}`}>
+                  <h3 className="text-xl font-semibold tracking-tight hover:text-primary transition-colors">
+                    {post.title}
+                  </h3>
+                </Link>
+                {post.excerpt && (
+                  <p className="text-muted-foreground line-clamp-2">
+                    {post.excerpt}
+                  </p>
+                )}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {post.category && (
+                    <>
+                      <Link
+                        href={`/blog/category/${post.category.slug}`}
+                        className="hover:text-primary transition-colors"
+                      >
+                        {post.category.name}
+                      </Link>
+                      <span>•</span>
+                    </>
+                  )}
+                  <time dateTime={post.published_at}>
+                    {formatDistance(new Date(post.published_at), new Date(), {
+                      addSuffix: true,
+                    })}
+                  </time>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 
         if (error) {
           console.error("Error fetching blog posts:", error);
