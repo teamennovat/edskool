@@ -37,6 +37,9 @@
     "zod": "^4.0.8"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/plugin-syntax-jsx": "^7.27.1",
+    "@babel/preset-react": "^7.27.1",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
