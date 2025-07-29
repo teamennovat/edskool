@@ -7,21 +7,54 @@ import { cookies } from "next/headers";
 import { format } from "date-fns";
 import { RelatedPosts } from "../components/related-posts";
 
+interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface BlogTag {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  featured_image: string | null;
+  published_at: string;
+  meta_title: string | null;
+  meta_description: string | null;
+  author: {
+    id: string;
+    email: string;
+    name: string | null;
+  };
+  category: BlogCategory;
+}
+
 interface Props {
   params: {
     slug: string;
   };
 }
 
-
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+// Generate metadata for SEO
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = createServerComponentClient({ cookies });
+
   const { data: post } = await supabase.rpc("get_blog_post_with_details", {
     post_slug: params.slug,
   });
 
   if (!post) {
-    return { title: "Post Not Found - edskool Blog" };
+    return {
+      title: "Post Not Found - edskool Blog",
+    };
   }
 
   return {
@@ -32,14 +65,17 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: post.post.meta_description || post.post.excerpt,
       type: "article",
       url: `/blog/${post.post.slug}`,
-      images: post.post.featured_image ? [{ url: post.post.featured_image }] : [],
+      images: post.post.featured_image
+        ? [{ url: post.post.featured_image }]
+        : [],
     },
   };
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage({ params }: Props) {
   const supabase = createServerComponentClient({ cookies });
 
+  // Fetch both post details and categories in parallel
   const [postResult, categoriesResult] = await Promise.all([
     supabase.rpc("get_blog_post_with_details", {
       post_slug: params.slug,

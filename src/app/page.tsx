@@ -6,10 +6,10 @@ import { TrustedBy } from "@/components/shared/trusted-by";
 import { FeatureSection } from "@/components/shared/feature-section";
 import HeroSection from "@/components/shared/hero-section";
 
-export default function Home() {
+export default async function Home() {
   return (
     <>
-      <HeroSection />
+    <HeroSection />
       <TrustedBy />
       <FeaturedCategories />
       <FeatureSection />
